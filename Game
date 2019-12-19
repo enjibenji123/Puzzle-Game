@@ -1,0 +1,388 @@
+   #INFT1004. Assignment 2. Slide Puzzle.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+    #Ben Harris and Richard Kumar. April,2019.
+    
+              
+def puzzle(picfile):                                                   
+  file = picfile       
+  pic = makePicture(file)
+  croppedPic = crop(pic) #Calls function crop() to return a cropped picture.
+  gridLinePic = grid(croppedPic) #Calls function grid() to return a picture with grid lines.
+  import random #imports random module to make random numbers/choose random items from lists.
+  width = getWidth(gridLinePic)
+  height = getHeight(gridLinePic)
+  gridSize = puzzleSize()#Calls function puzzleSize to get the amount of tiles in the puzzle. 
+  gridSpaceWidth = width / gridSize
+  gridSpaceHeight = height / gridSize
+  
+  
+  #Creates tiles by cropping picture into 16 squares (with onre of the squares being an empty black square).
+  tile1 = gridLinePic.crop(0, 0, gridSpaceWidth+1, gridSpaceHeight+1)
+  emptyTile = makeEmptyPicture(gridSpaceWidth+1, gridSpaceHeight+1)
+  makeBlack(tile1, emptyTile, 0, 0)
+  tile2 = gridLinePic.crop(gridSpaceWidth, 0, gridSpaceWidth+1, gridSpaceHeight+1)
+  tile3 = gridLinePic.crop((gridSpaceWidth*2), 0, gridSpaceWidth+1, gridSpaceHeight+1)
+  tile4 = gridLinePic.crop((gridSpaceWidth*3), 0, gridSpaceWidth+1, gridSpaceHeight+1)
+  tile5 = gridLinePic.crop(0, gridSpaceHeight, gridSpaceWidth+1, gridSpaceHeight+1)
+  tile6 = gridLinePic.crop(gridSpaceWidth, gridSpaceHeight, gridSpaceWidth+1, gridSpaceHeight+1)
+  tile7 = gridLinePic.crop((gridSpaceWidth*2), gridSpaceHeight, gridSpaceWidth+1, gridSpaceHeight+1)
+  tile8 = gridLinePic.crop((gridSpaceWidth*3), gridSpaceHeight, gridSpaceWidth+1, gridSpaceHeight+1)
+  tile9 = gridLinePic.crop(0, (gridSpaceHeight*2), gridSpaceWidth+1, gridSpaceHeight+1)
+  tile10 = gridLinePic.crop(gridSpaceWidth, (gridSpaceHeight*2), gridSpaceWidth+1, gridSpaceHeight+1)
+  tile11 = gridLinePic.crop((gridSpaceWidth*2), (gridSpaceHeight*2), gridSpaceWidth+1, gridSpaceHeight+1)
+  tile12 = gridLinePic.crop((gridSpaceWidth*3), (gridSpaceHeight*2), gridSpaceWidth+1, gridSpaceHeight+1)
+  tile13 = gridLinePic.crop(0, (gridSpaceHeight*3), gridSpaceWidth+1, gridSpaceHeight+1)
+  tile14 = gridLinePic.crop(gridSpaceWidth, (gridSpaceHeight*3), gridSpaceWidth+1, gridSpaceHeight+1)
+  tile15 = gridLinePic.crop((gridSpaceWidth*2), (gridSpaceHeight*3), gridSpaceWidth+1, gridSpaceHeight+1)
+  tile16 = gridLinePic.crop((gridSpaceWidth*3), (gridSpaceHeight*3), gridSpaceWidth+1, gridSpaceHeight+1)
+  listTiles = [emptyTile, tile2, tile3, tile4, tile5, tile6, tile7, tile8, tile9, tile10, tile11, tile12, tile13, tile14, tile15, tile16]
+  puzzle = makeEmptyPicture(width, height) #Makes new picture of original picture height and width ready to paste tiles onto.
+  
+  
+  #Rules to show how to play
+  print("\n\n\n\nThis is a slide puzzle game.")
+  print("In this game your aim is to slide the tiles of the puzzle around until you have successfully pieced back together your image, with the empty tile ending in the top left corner.")
+  print("The slide puzzle will start up in its finished state so you can see the picture you have to create.")
+  print("From here you may get used to the controls before starting your game.")
+  print("Controls:")
+  print("You control the empty square using the keys W, A, S and D.")
+  print("W = moves the empty square up.")
+  print("A = moves the empty square left.")
+  print("S = moves the empty square down.")
+  print("D = moves the empty square right.")
+  print("You may also have the choice of pressing Q (Quit) or R (Run).")
+  print("You may wish to get used to moving around your empty block before starting your game!")
+  print("When you wish to begin your game you may start by pressing the run key (R)")
+  print("After starting your game you will be able to end the game either by winning or pressing the quit key (Q)")
+  print("If you try to do an invalid move the game will tell you below:")
+  
+    
+  answer = ""
+  while answer != "r":
+    square1((listTiles[0]), puzzle, 0, 0) #(picture to get pixels from, target image to paste pixels to, x starting point , y starting point) Same for all square functions....
+    square2((listTiles[1]), puzzle, gridSpaceWidth, 0)
+    square3((listTiles[2]), puzzle, (gridSpaceWidth*2), 0)
+    square4((listTiles[3]), puzzle, (gridSpaceWidth*3), 0)
+    square5((listTiles[4]), puzzle, 0, gridSpaceHeight)
+    square6((listTiles[5]), puzzle, gridSpaceWidth, gridSpaceHeight)
+    square7((listTiles[6]), puzzle, (gridSpaceWidth*2), gridSpaceHeight)
+    square8((listTiles[7]), puzzle, (gridSpaceWidth*3), gridSpaceHeight)
+    square9((listTiles[8]), puzzle, 0, (gridSpaceHeight*2))
+    square10((listTiles[9]), puzzle, gridSpaceWidth, (gridSpaceHeight*2))
+    square11((listTiles[10]), puzzle, (gridSpaceWidth*2), (gridSpaceHeight*2))
+    square12((listTiles[11]), puzzle, (gridSpaceWidth*3), (gridSpaceHeight*2))
+    square13((listTiles[12]), puzzle, 0, (gridSpaceHeight*3))
+    square14((listTiles[13]), puzzle, gridSpaceWidth, (gridSpaceHeight*3))
+    square15((listTiles[14]), puzzle, (gridSpaceWidth*2), (gridSpaceHeight*3))
+    square16((listTiles[15]), puzzle, (gridSpaceWidth*3), (gridSpaceHeight*3))
+    repaint(puzzle)
+    answer = requestString("w,a,s,d or r") 
+    if answer == "w":
+      a = listTiles.index(emptyTile)
+      if (a == 0) or (a == 1) or (a == 2) or (a == 3): #Checks for invalid move
+       print("invalid move")
+      else:  
+       b = a - gridSize
+       listTiles[b], listTiles[a] = listTiles[a], listTiles[b] #Swaps two items in list
+    if answer == "a":
+      a = listTiles.index(emptyTile)
+      if (a == 0) or (a == 4) or (a == 8) or (a == 12):  #Checks for invalid move
+       print("invalid move")
+      else:
+       b = a - 1
+       listTiles[b], listTiles[a] = listTiles[a], listTiles[b] #Swaps two items in list
+    if answer == "s":
+      a = listTiles.index(emptyTile)
+      if (a == 12) or (a == 13) or (a == 14) or (a == 15):  #Checks for invalid move
+       print("invalid move")
+      else:  
+       b = a + gridSize
+       listTiles[b], listTiles[a] = listTiles[a], listTiles[b]  #Swaps two items in list
+    if answer == "d":
+      a = listTiles.index(emptyTile)
+      if (a == 3) or (a == 7) or (a == 11) or (a == 15):  #Checks for invalid move
+       print("invalid move")
+      else:  
+       b = a + 1
+       listTiles[b], listTiles[a] = listTiles[a], listTiles[b]  #Swaps two items in list
+    if answer == "r":
+      break 
+     
+     
+     
+  
+  list = [emptyTile, tile2, tile3, tile4, tile5, tile6, tile7, tile8, tile9, tile10, tile11, tile12, tile13, tile14, tile15, tile16]
+  shuffleNumber = random.randint(50,100)
+  move = 0
+  while (move < shuffleNumber):
+    listMoves = ["w","a","s","d"]
+    answer = random.choice(listMoves) 
+    if answer == "w":
+      a = listTiles.index(emptyTile)
+      if (a != 0) and (a != 1) and (a != 2) and (a != 3):  #Checks for invalid move
+       b = a - gridSize
+       listTiles[b], listTiles[a] = listTiles[a], listTiles[b]  #Swaps two items in list
+       move = move + 1
+    if answer == "a":
+      a = listTiles.index(emptyTile)
+      if (a != 0) and (a != 4) and (a != 8) and (a != 12):  #Checks for invalid move
+       b = a - 1
+       listTiles[b], listTiles[a] = listTiles[a], listTiles[b]  #Swaps two items in list
+       move = move + 1
+    if answer == "s":
+      a = listTiles.index(emptyTile)
+      if (a != 12) and (a != 13) and (a != 14) and (a != 15):  #Checks for invalid move
+       b = a + gridSize
+       listTiles[b], listTiles[a] = listTiles[a], listTiles[b]  #Swaps two items in list
+       move = move + 1
+    if answer == "d":
+      a = listTiles.index(emptyTile)
+      if (a != 3) and (a != 7) and (a != 11) and (a != 15):  #Checks for invalid move
+       b = a + 1
+       listTiles[b], listTiles[a] = listTiles[a], listTiles[b]  #Swaps two items in list
+       move = move + 1
+  
+  
+  
+  tally = 0
+  answer = ""
+  while answer != "q":
+    square1((listTiles[0]), puzzle, 0, 0) #(picture to get pixels from, target image to paste pixels to, x starting point , y starting point) Same for all square functions....
+    square2((listTiles[1]), puzzle, gridSpaceWidth, 0) 
+    square3((listTiles[2]), puzzle, (gridSpaceWidth*2), 0)
+    square4((listTiles[3]), puzzle, (gridSpaceWidth*3), 0)
+    square5((listTiles[4]), puzzle, 0, gridSpaceHeight)
+    square6((listTiles[5]), puzzle, gridSpaceWidth, gridSpaceHeight)
+    square7((listTiles[6]), puzzle, (gridSpaceWidth*2), gridSpaceHeight)
+    square8((listTiles[7]), puzzle, (gridSpaceWidth*3), gridSpaceHeight)
+    square9((listTiles[8]), puzzle, 0, (gridSpaceHeight*2))
+    square10((listTiles[9]), puzzle, gridSpaceWidth, (gridSpaceHeight*2))
+    square11((listTiles[10]), puzzle, (gridSpaceWidth*2), (gridSpaceHeight*2))
+    square12((listTiles[11]), puzzle, (gridSpaceWidth*3), (gridSpaceHeight*2))
+    square13((listTiles[12]), puzzle, 0, (gridSpaceHeight*3))
+    square14((listTiles[13]), puzzle, gridSpaceWidth, (gridSpaceHeight*3))
+    square15((listTiles[14]), puzzle, (gridSpaceWidth*2), (gridSpaceHeight*3))
+    square16((listTiles[15]), puzzle, (gridSpaceWidth*3), (gridSpaceHeight*3))
+    repaint(puzzle)
+    answer = requestString("w,a,s,d or q") 
+    if answer == "w":
+      a = listTiles.index(emptyTile)
+      if (a == 0) or (a == 1) or (a == 2) or (a == 3):  #Checks for invalid move
+       print("invalid move")
+      else:  
+       b = a - gridSize
+       listTiles[b], listTiles[a] = listTiles[a], listTiles[b]  #Swaps two items in list
+       tally = tally + 1
+    if answer == "a":
+      a = listTiles.index(emptyTile)
+      if (a == 0) or (a == 4) or (a == 8) or (a == 12):  #Checks for invalid move
+       print("invalid move")
+      else:
+       b = a - 1
+       listTiles[b], listTiles[a] = listTiles[a], listTiles[b]  #Swaps two items in list
+       tally = tally + 1 
+    if answer == "s":
+      a = listTiles.index(emptyTile)
+      if (a == 12) or (a == 13) or (a == 14) or (a == 15):  #Checks for invalid move
+       print("invalid move")
+      else:  
+       b = a + gridSize
+       listTiles[b], listTiles[a] = listTiles[a], listTiles[b]  #Swaps two items in list
+       tally = tally + 1
+    if answer == "d":
+      a = listTiles.index(emptyTile)
+      if (a == 3) or (a == 7) or (a == 11) or (a == 15):  #Checks for invalid move
+       print("invalid move")
+      else:  
+       b = a + 1
+       listTiles[b], listTiles[a] = listTiles[a], listTiles[b]  #Swaps two items in list
+       tally = tally + 1
+    if answer == "q":
+      print("\n\n\n\nThis puzzle was left unsolved by you after " + str(tally) + " moves.")
+      break   
+    if listTiles ==  [emptyTile, tile2, tile3, tile4, tile5, tile6, tile7, tile8, tile9, tile10, tile11, tile12, tile13, tile14, tile15, tile16]:  #Checks for winning puzzle sequence.
+     print("\n\n\n\n\n\n****Winner Winner Chicken Dinner****")
+     print("This puzzle took you " + str(tally) + " moves to solve.\n\n") 
+     break
+      
+     
+    
+     
+    
+   
+
+       
+
+#This function returns the amount of tiles in each row/coloum of the puzzle.
+def puzzleSize():
+  puzzleSize = 4                                
+  return int(puzzleSize)
+    
+    
+    
+#This function crops image into a square.    
+def crop(pic):                                  
+  height = getHeight(pic)
+  width = getWidth(pic)
+  if(height > width):
+    difference = height - width
+    excess = difference/2
+    pic.crop(0, excess, width, ((height-1)-excess))
+  if(width > height):
+    difference = width - height
+    excess = difference/2
+    pic = pic.crop(excess, 0, ((width-1)-excess), height)
+  return pic
+  
+ 
+ 
+ 
+#This function applys grid lines to the image.
+def grid(croppedPic):
+  height = getHeight(croppedPic)
+  width = getWidth(croppedPic)
+  gridSize = puzzleSize()   #Calls function puzzleSize to get the amount of tiles in the puzzle.                                
+  gridSpaceWidth = width / gridSize
+  gridSpaceHeight = height / gridSize
+  gridSpaceWidthRem = width % gridSize
+  gridSpaceHeightRem = height % gridSize
+  if(gridSpaceWidthRem == 0) and (gridSpaceHeightRem == 0):
+    height= height - 1
+    width = width - 1
+    gridSpaceWidth = width / gridSize
+    gridSpaceHeight = height / gridSize
+    gridSpaceWidthRem = width % gridSize
+    gridSpaceHeightRem = height % gridSize
+  if(gridSpaceWidthRem > 0) and (gridSpaceHeightRem > 0):
+    width = width - gridSpaceWidthRem
+    height = height - gridSpaceHeightRem
+    croppedPic = croppedPic.crop(0, 0, width+1, height+1)
+  for index in range(0, gridSize+1):
+    lineCoorX = (index * gridSpaceWidth)
+    lineCoorY = (index * gridSpaceHeight)
+    addLine(croppedPic, lineCoorX, 0, lineCoorX, height)  
+    addLine(croppedPic, 0, lineCoorY, width, lineCoorY)
+  return croppedPic
+ 
+ 
+
+ 
+  
+#Square functions are used to hard code in/calculate where to draw tiles.  
+def square1(pic, target, xStart, yStart): #(picture to get pixels from, target image to paste pixels to, x starting point , y starting point)
+   for x in range(0, getWidth(pic)):
+     for y in range(0, getHeight(pic)):
+       color = getColor(getPixel(pic, x, y))
+       setColor(getPixel(target,xStart+x, yStart+y), color)
+       
+#Square functions are used to hard code in/calculate where to draw tiles.
+def square2(pic, target, xStart, yStart): #(picture to get pixels from, target image to paste pixels to, x starting point , y starting point)
+   for x in range(0, getWidth(pic)):
+     for y in range(0, getHeight(pic)):
+       color = getColor(getPixel(pic, x, y))
+       setColor(getPixel(target,xStart+x, yStart+y), color)
+       
+#Square functions are used to hard code in/calculate where to draw tiles.
+def square3(pic, target, xStart, yStart): #(picture to get pixels from, target image to paste pixels to, x starting point , y starting point)
+   for x in range(0, getWidth(pic)):
+     for y in range(0, getHeight(pic)):
+       color = getColor(getPixel(pic, x, y))
+       setColor(getPixel(target,xStart+x, yStart+y), color)
+
+#Square functions are used to hard code in/calculate where to draw tiles.       
+def square4(pic, target, xStart, yStart): #(picture to get pixels from, target image to paste pixels to, x starting point , y starting point)
+   for x in range(0, getWidth(pic)):
+     for y in range(0, getHeight(pic)):
+       color = getColor(getPixel(pic, x, y))
+       setColor(getPixel(target,xStart+x, yStart+y), color)  
+       
+#Square functions are used to hard code in/calculate where to draw tiles.                          
+def square5(pic, target, xStart, yStart): #(picture to get pixels from, target image to paste pixels to, x starting point , y starting point)
+   for x in range(0, getWidth(pic)):
+     for y in range(0, getHeight(pic)):
+       color = getColor(getPixel(pic, x, y))
+       setColor(getPixel(target,xStart+x, yStart+y), color) 
+       
+#Square functions are used to hard code in/calculate where to draw tiles.                                
+def square6(pic, target, xStart, yStart): #(picture to get pixels from, target image to paste pixels to, x starting point , y starting point)
+   for x in range(0, getWidth(pic)):
+     for y in range(0, getHeight(pic)):
+       color = getColor(getPixel(pic, x, y))
+       setColor(getPixel(target,xStart+x, yStart+y), color)
+       
+#Square functions are used to hard code in/calculate where to draw tiles.
+def square7(pic, target, xStart, yStart): #(picture to get pixels from, target image to paste pixels to, x starting point , y starting point)
+   for x in range(0, getWidth(pic)):
+     for y in range(0, getHeight(pic)):
+       color = getColor(getPixel(pic, x, y))
+       setColor(getPixel(target,xStart+x, yStart+y), color)                                                                                                                                                                           
+                                                                
+#Square functions are used to hard code in/calculate where to draw tiles.
+def square8(pic, target, xStart, yStart): #(picture to get pixels from, target image to paste pixels to, x starting point , y starting point)
+   for x in range(0, getWidth(pic)):
+     for y in range(0, getHeight(pic)):
+       color = getColor(getPixel(pic, x, y))
+       setColor(getPixel(target,xStart+x, yStart+y), color)         
+      
+#Square functions are used to hard code in/calculate where to draw tiles.
+def square9(pic, target, xStart, yStart): #(picture to get pixels from, target image to paste pixels to, x starting point , y starting point)
+   for x in range(0, getWidth(pic)):
+     for y in range(0, getHeight(pic)):
+       color = getColor(getPixel(pic, x, y))
+       setColor(getPixel(target,xStart+x, yStart+y), color) 
+       
+#Square functions are used to hard code in/calculate where to draw tiles.         
+def square10(pic, target, xStart, yStart): #(picture to get pixels from, target image to paste pixels to, x starting point , y starting point)
+   for x in range(0, getWidth(pic)):
+     for y in range(0, getHeight(pic)):
+       color = getColor(getPixel(pic, x, y))
+       setColor(getPixel(target,xStart+x, yStart+y), color)           
+
+#Square functions are used to hard code in/calculate where to draw tiles.               
+def square11(pic, target, xStart, yStart): #(picture to get pixels from, target image to paste pixels to, x starting point , y starting point)
+   for x in range(0, getWidth(pic)):
+     for y in range(0, getHeight(pic)):
+       color = getColor(getPixel(pic, x, y))
+       setColor(getPixel(target,xStart+x, yStart+y), color)                              
+                                             
+#Square functions are used to hard code in/calculate where to draw tiles.                                                            
+def square12(pic, target, xStart, yStart): #(picture to get pixels from, target image to paste pixels to, x starting point , y starting point)
+   for x in range(0, getWidth(pic)):
+     for y in range(0, getHeight(pic)):
+       color = getColor(getPixel(pic, x, y))
+       setColor(getPixel(target,xStart+x, yStart+y), color)                                                                           
+                                                                                          
+#Square functions are used to hard code in/calculate where to draw tiles.                                                                                                         
+def square13(pic, target, xStart, yStart): #(picture to get pixels from, target image to paste pixels to, x starting point , y starting point)
+   for x in range(0, getWidth(pic)):
+     for y in range(0, getHeight(pic)):
+       color = getColor(getPixel(pic, x, y))
+       setColor(getPixel(target,xStart+x, yStart+y), color)                                                                                                                        
+                                                                                                                                       
+#Square functions are used to hard code in/calculate where to draw tiles.
+def square14(pic, target, xStart, yStart): #(picture to get pixels from, target image to paste pixels to, x starting point , y starting point)
+   for x in range(0, getWidth(pic)):
+     for y in range(0, getHeight(pic)):
+       color = getColor(getPixel(pic, x, y))
+       setColor(getPixel(target,xStart+x, yStart+y), color)                                                                                                                                                      
+ 
+#Square functions are used to hard code in/calculate where to draw tiles.
+def square15(pic, target, xStart, yStart): #(picture to get pixels from, target image to paste pixels to, x starting point , y starting point)
+   for x in range(0, getWidth(pic)):
+     for y in range(0, getHeight(pic)):
+       color = getColor(getPixel(pic, x, y))
+       setColor(getPixel(target,xStart+x, yStart+y), color)
+       
+#Square functions are used to hard code in/calculate where to draw tiles.                                                                                                                                                                                                                                                                                                                                                                              
+def square16(pic, target, xStart, yStart): #(picture to get pixels from, target image to paste pixels to, x starting point , y starting point)
+   for x in range(0, getWidth(pic)):
+     for y in range(0, getHeight(pic)):
+       color = getColor(getPixel(pic, x, y))
+       setColor(getPixel(target,xStart+x, yStart+y), color)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+#Square functions are used to hard code in/calculate where to draw tiles.
+def makeBlack(pic, target, xStart, yStart): #(picture to get pixels from, target image to paste pixels to, x starting point , y starting point)
+    for x in range(0, getWidth(pic)):
+     for y in range(0, getHeight(pic)):
+       getPixel(pic, x, y)
+       setColor(getPixel(target, xStart+x, yStart+y), black)
+       
